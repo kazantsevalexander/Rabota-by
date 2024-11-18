@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Анализ вакансий{% endblock %}
+
+{% block content %}
+
+    <form method="get" class="mb-4">
+        <div class="row">
+            <div class="col-md-4">
+                <input type="text" name="specialty" class="form-control" placeholder="Введите название специальности" value="{{ specialty }}">
+            </div>
+            <div class="col-md-4">
+                <input type="number" name="min_salary" class="form-control" placeholder="Минимальная зарплата (BYN)">
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary">Применить</button>
+            </div>
+        </div>
+    </form>
+
+    {% if plot_path %}
+        <img src="{{ plot_path }}" alt="Распределение зарплат" class="img-fluid">
+    {% else %}
+        <p>Нет данных о зарплатах для построения графика.</p>
+    {% endif %}
+
+    <h2 class="mt-4">Список вакансий</h2>
+
+    <!-- Поля поиска -->
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <input type="text" id="searchName" class="form-control" placeholder="Поиск по названию">
+        </div>
+        <div class="col-md-6">
+            <input type="text" id="searchEmployer" class="form-control" placeholder="Поиск по работодателю">
+        </div>
+    </div>
+
+    <table class="table table-striped" id="vacancyTable">
+        <thead>
+            <tr>
+                <th><a href="/?sort_by=name&specialty={{ specialty }}">Название</a></th>
+                <th><a href="/?sort_by=employer&specialty={{ specialty }}">Работодатель</a></th>
+                <th><a href="/?sort_by=published_at&specialty={{ specialty }}">Дата публикации</a></th>
+                <th><a href="/?sort_by=average_salary&specialty={{ specialty }}">Зарплата</a></th>
+                <th>Ссылка</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for v in vacancies %}
+                <tr>
+                    <td class="name-column">{{ v.name }}</td>
+                    <td class="employer-column">{{ v.employer }}</td>
+                    <td>{{ v.published_at }}</td>
+                    <td>{{ v.salary }}</td>
+                    <td><a href="{{ v.url }}" target="_blank">Открыть</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        document.getElementById('searchName').addEventListener('input', function () {
+            const searchValue = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#vacancyTable tbody tr');
+            rows.forEach(row => {
+                const name = row.querySelector('.name-column').textContent.toLowerCase();
+                row.style.display = name.includes(searchValue) ? '' : 'none';
+            });
+        });
+
+        document.getElementById('searchEmployer').addEventListener('input', function () {
+            const searchValue = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#vacancyTable tbody tr');
+            rows.forEach(row => {
+                const employer = row.querySelector('.employer-column').textContent.toLowerCase();
+                row.style.display = employer.includes(searchValue) ? '' : 'none';
+            });
+        });
+    </script>
+{% endblock %}

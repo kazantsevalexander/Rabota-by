@@ -94,10 +94,12 @@ def save_salary_plot(salaries, total_vacancies):
 
 @app.route('/')
 def index():
+    # Получение данных из параметров запроса
     specialty = request.args.get('specialty', 'графический дизайнер')
-    sort_by = request.args.get('sort_by', 'name')
+    sort_by = request.args.get('sort_by', 'published_at')  # По умолчанию сортировка по дате публикации
     min_salary = request.args.get('min_salary', type=float, default=0)
 
+    # Сбор всех вакансий через API
     all_vacancies = []
     page = 0
     while True:
@@ -111,23 +113,24 @@ def index():
         else:
             break
 
+    # Обработка и фильтрация вакансий
     processed_vacancies = process_vacancies(all_vacancies)
     filtered_vacancies = [v for v in processed_vacancies if (v['average_salary'] or 0) >= min_salary]
 
+    # Сортировка данных
     if sort_by == 'name':
         filtered_vacancies.sort(key=lambda x: x['name'])
     elif sort_by == 'employer':
         filtered_vacancies.sort(key=lambda x: x['employer'])
     elif sort_by == 'published_at':
         filtered_vacancies.sort(
-            key=lambda x: datetime.strptime(x['published_at'], '%d-%m-%Y') if x[
-                                                                                  'published_at'] != "Неизвестно" else datetime.min,
+            key=lambda x: datetime.strptime(x['published_at'], '%d-%m-%Y') if x['published_at'] != "Неизвестно" else datetime.min,
             reverse=True
         )
-
     elif sort_by == 'average_salary':
         filtered_vacancies.sort(key=lambda x: (x['average_salary'] or 0), reverse=True)
 
+    # Подготовка данных для графика зарплат
     salaries = [v['average_salary'] for v in filtered_vacancies if v['average_salary']]
     plot_path = save_salary_plot(salaries, len(all_vacancies))
 
@@ -136,6 +139,7 @@ def index():
                            vacancies=filtered_vacancies,
                            total_vacancies=len(all_vacancies),
                            specialty=specialty)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

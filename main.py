@@ -135,7 +135,7 @@ def index():
     plot_path = save_salary_plot(salaries, len(all_vacancies))
 
     return render_template('index.html',
-                           plot_path=plot_path,
+                           plot_path='/static/salary_distribution.png',
                            vacancies=filtered_vacancies,
                            total_vacancies=len(all_vacancies),
                            specialty=specialty)

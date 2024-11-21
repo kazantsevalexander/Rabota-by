@@ -5,7 +5,6 @@
 {% block content %}
 
 <div class="container mt-5">
-    <h1 class="text-center mb-4">Анализ вакансий</h1>
 
     <!-- Форма фильтрации -->
     <form method="get" class="mb-4">
@@ -61,17 +60,15 @@
                     <th><a href="/?sort_by=employer&specialty={{ specialty }}" class="text-decoration-none text-dark">Работодатель</a></th>
                     <th><a href="/?sort_by=published_at&specialty={{ specialty }}" class="text-decoration-none text-dark">Дата публикации</a></th>
                     <th><a href="/?sort_by=average_salary&specialty={{ specialty }}" class="text-decoration-none text-dark">Зарплата</a></th>
-                    <th>Ссылка</th>
                 </tr>
             </thead>
             <tbody>
                 {% for v in vacancies %}
                     <tr>
-                        <td class="name-column">{{ v.name }}</td>
+                        <td><a href="{{ v.url }}" target="_blank" class="btn btn-link text-decoration-none">{{ v.name }}</a></td>
                         <td class="employer-column">{{ v.employer }}</td>
                         <td>{{ v.published_at }}</td>
                         <td>{{ v.salary }}</td>
-                        <td><a href="{{ v.url }}" target="_blank" class="btn btn-link text-decoration-none">Открыть</a></td>
                     </tr>
                 {% endfor %}
             </tbody>

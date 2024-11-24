@@ -1,7 +1,10 @@
 import os
 import requests
 from flask import Flask, render_template, request
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import numpy as np
 from datetime import datetime
 
@@ -76,7 +79,6 @@ def process_vacancies(vacancies):
             'average_salary': average_salary
         })
     return processed
-
 
 def save_salary_plot(salaries, total_vacancies):
     if not salaries:
